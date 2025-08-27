@@ -22,6 +22,7 @@
             background-color: #000000;
             color: #333;
             line-height: 1.6;
+            overflow-x: hidden;
         }
 
         .container {
@@ -138,6 +139,7 @@
             color: #ffffff;
             font-weight: 1000;
             font-size: 18px;
+            transition: color 0.3s ease;
         }
 
         nav ul li a:hover {
@@ -293,7 +295,19 @@
             margin-bottom: 12px;
         }
 
-        .add-to-cart {
+        .add-to-cart-stk {
+            width: 100%;
+            padding: 10px;
+            background-color: #ed00d1;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s;
+            font-size: 16px;
+        }
+        .add-to-cart-prnt {
             width: 100%;
             padding: 10px;
             background-color: #ed00d1;
@@ -314,10 +328,27 @@
         .page {
             display: none;
             padding: 20px 0;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            position: absolute;
+            width: 100%;
+            top: 80px;
+            left: 0;
         }
 
         .page.active {
             display: block;
+            opacity: 1;
+            transform: translateY(0);
+            position: relative;
+            top: 0;
+        }
+
+        .page.exiting {
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
         }
 
         /* Footer */
@@ -440,6 +471,42 @@
             justify-content: center;
             gap: 20px;
             margin: 20px 0;
+        }
+
+        /* Loading animation */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        
+        .loader.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .loader-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(237, 0, 209, 0.2);
+            border-radius: 50%;
+            border-top: 5px solid #ed00d1;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         /* Mobile Responsive Styles */
@@ -581,6 +648,11 @@
     </style>
 </head>
 <body>
+    <!-- Loading animation -->
+    <div class="loader" id="loader">
+        <div class="loader-spinner"></div>
+    </div>
+
     <!-- Header -->
     <header>
         <div class="container1">
@@ -591,16 +663,16 @@
                     <span></span>
                 </button>
                 
-                <a href="#" class="logo" onclick="showPage('home'); return false;">
+                <a href="#" class="logo" onclick="showPageWithTransition('home'); return false;">
                     <div class="logo-image default"></div>
                     <div class="logo-image hover"></div>
                 </a>
                 
                 <nav id="main-nav">
                     <ul>
-                        <li><a href="#" onclick="showPage('home'); return false;">Home</a></li>
-                        <li><a href="#" onclick="showPage('stickers'); return false;">Stickers</a></li>
-                        <li><a href="#" onclick="showPage('prints'); return false;">Prints</a></li>
+                        <li><a href="#" onclick="showPageWithTransition('home'); return false;">Home</a></li>
+                        <li><a href="#" onclick="showPageWithTransition('stickers'); return false;">Stickers</a></li>
+                        <li><a href="#" onclick="showPageWithTransition('prints'); return false;">Prints</a></li>
                     </ul>
                 </nav>
                 
@@ -620,57 +692,65 @@
                 Your browser does not support the video tag.
             </video>
         </div>
-
+    
         <div class="container2">
             <h2 class="section-title">Hot pieceS</h2>
-            <div class="products">
-                <div class="product">
-                    <div class="product-img">
-                        <video autoplay muted loop playsinline class="video-background1">
+            
+            <!-- First product section -->
+            <div class="products" style="display: flex; flex-wrap: nowrap; gap: 20px; justify-content: center; width: 100%; margin-bottom: 20px;">
+                <div class="product" style="height: 350px; width: 250px; flex-shrink: 0;">
+                    <div class="product-img" style="height: 300px; width: 250px;">
+                        <video autoplay muted loop playsinline class="video-background1" style="height: 100%; width: 100%; object-fit: cover;">
                             <source src="vs.mp4" type="video/mp4">
                         </video>                   
-                     </div>
-                    <div class="product-info">
+                    </div>
+                    <div class="product-info" style="margin-top: 10px;">
                         <h3 class="product-title">piece ten: "voidspktrum"</h3>
                     </div>
                 </div>
-                <div class="product">
-                    <div class="product-img">
-                        <video autoplay muted loop playsinline class="video-background1">
+                <div class="product" style="height: 350px; width: 250px; flex-shrink: 0;">
+                    <div class="product-img" style="height: 300px; width: 250px;">
+                        <video autoplay muted loop playsinline class="video-background1" style="height: 100%; width: 100%; object-fit: cover;">
                             <source src="vs17.mp4" type="video/mp4">
                         </video>
                     </div>
-                    <div class="product-info">
+                    <div class="product-info" style="margin-top: 10px;">
                         <h3 class="product-title">piece 017: "dont rush"</h3>
                     </div>
                 </div>
-                <div class="product">
-                    <div class="product-img">
-                        <video autoplay muted loop playsinline class="video-background1">
+            </div>
+    
+            <!-- Second product section -->
+            <div class="products" style="display: flex; flex-wrap: nowrap; gap: 20px; justify-content: center; width: 100%;">
+                <div class="product" style="height: 350px; width: 250px; flex-shrink: 0;">
+                    <div class="product-img" style="height: 300px; width: 250px;">
+                        <video autoplay muted loop playsinline class="video-background1" style="height: 100%; width: 100%; object-fit: cover;">
                             <source src="wct.mp4" type="video/mp4">
-                        </video>
+                        </video>                   
                     </div>
-                    <div class="product-info">
+                    <div class="product-info" style="margin-top: 10px;">
                         <h3 class="product-title">piece 019</h3>
                     </div>
                 </div>
-                <div class="product">
-                    <div class="product-img">
-                        <video autoplay muted loop playsinline class="video-background1">
+                <div class="product" style="height: 350px; width: 250px; flex-shrink: 0;">
+                    <div class="product-img" style="height: 300px; width: 250px;">
+                        <video autoplay muted loop playsinline class="video-background1" style="height: 100%; width: 100%; object-fit: cover;">
                             <source src="yzyus.mp4" type="video/mp4">
-                        </video>                  
+                        </video>
                     </div>
-                    <div class="product-info">
+                    <div class="product-info" style="margin-top: 10px;">
                         <h3 class="product-title">piece six: "synth"</h3>
                     </div>
                 </div>
             </div>
+    
         </div>
     </div>
+    
 
     <!-- Stickers Page -->
     <div id="stickers" class="page">
-        <div class="container2">
+        <div class="container2" style="margin-top: 50px;">
             <h2 class="section-title">Stickers</h2>
             <div class="products-stk">
                 <div class="product">
@@ -680,7 +760,7 @@
                     <div class="product-info">
                         <h3 class="product-title">voidspktrum x dawnfm</h3>
                         <p class="product-price">25 egp</p>
-                        <button class="add-to-cart">get</button>
+                        <button class="add-to-cart-stk">get</button>
                     </div>
                 </div>
                 <div class="product">
@@ -690,7 +770,7 @@
                     <div class="product-info">
                         <h3 class="product-title">vs</h3>
                         <p class="product-price">20 egp</p>
-                        <button class="add-to-cart">get</button>
+                        <button class="add-to-cart-stk">get</button>
                     </div>
                 </div>
                 <div class="product">
@@ -700,7 +780,7 @@
                     <div class="product-info">
                         <h3 class="product-title">vs_2</h3>
                         <p class="product-price">20 egp</p>
-                        <button class="add-to-cart">get</button>
+                        <button class="add-to-cart-stk">get</button>
                     </div>
                 </div>
                 <div class="product">
@@ -710,7 +790,7 @@
                     <div class="product-info">
                         <h3 class="product-title">vs_3</h3>
                         <p class="product-price">20 egp</p>
-                        <button class="add-to-cart">get</button>
+                        <button class="add-to-cart-stk">get</button>
                     </div>
                 </div>
             </div>
@@ -719,7 +799,7 @@
 
     <!-- Prints Page -->
     <div id="prints" class="page">
-        <div class="container2">
+        <div class="container2" style="margin-top: 50px;">
             <h2 class="section-title">Prints</h2>
             <div class="products-prnt">
                 <div class="product">
@@ -729,7 +809,7 @@
                     <div class="product-info">
                         <h3 class="product-title">piece 20</h3>
                         <p class="product-price">150 egp</p>
-                        <button class="add-to-cart">get</button>
+                        <button class="add-to-cart-prnt">get</button>
                     </div>
                 </div>
                 <div class="product">
@@ -739,7 +819,7 @@
                     <div class="product-info">
                         <h3 class="product-title">voidspktrum x House Of Balloons</h3>
                         <p class="product-price">150 egp</p>
-                        <button class="add-to-cart">get</button>
+                        <button class="add-to-cart-prnt">get</button>
                     </div>
                 </div>
                 <div class="product">
@@ -749,7 +829,7 @@
                     <div class="product-info">
                         <h3 class="product-title">piece 013</h3>
                         <p class="product-price">150 egp</p>
-                        <button class="add-to-cart">get</button>
+                        <button class="add-to-cart-prnt">get</button>
                     </div>
                 </div>
             </div>
@@ -852,27 +932,64 @@
     </footer>
 
     <script>
-        // Function to show the selected page and hide others
+        // Function to show the selected page with smooth transition
+        function showPageWithTransition(pageId) {
+            // Get current active page
+            const currentPage = document.querySelector('.page.active');
+            
+            // If clicking the same page link, do nothing
+            if (currentPage && currentPage.id === pageId) return;
+            
+            // Show loader
+            const loader = document.getElementById('loader');
+            loader.classList.add('active');
+            
+            // After a short delay, transition to the new page
+            setTimeout(() => {
+                // Add exiting class to current page for exit animation
+                if (currentPage) {
+                    currentPage.classList.add('exiting');
+                    currentPage.classList.remove('active');
+                }
+                
+                // Get the target page
+                const targetPage = document.getElementById(pageId);
+                
+                // After exit animation completes, show the new page
+                setTimeout(() => {
+                    if (currentPage) {
+                        currentPage.classList.remove('exiting');
+                    }
+                    
+                    // Show the target page
+                    targetPage.classList.add('active');
+                    
+                    // Hide loader
+                    loader.classList.remove('active');
+                    
+                    // Close mobile menu if open
+                    document.getElementById('main-nav').classList.remove('active');
+                    
+                    // Scroll to top
+                    window.scrollTo(0, 0);
+                }, 300); // Match this with the exit animation duration
+            }, 500); // Loader display time
+        }
+
+        // Original function kept for compatibility
         function showPage(pageId) {
-            // Hide all pages
-            document.querySelectorAll('.page').forEach(page => {
-                page.classList.remove('active');
-            });
-            
-            // Show the selected page
-            document.getElementById(pageId).classList.add('active');
-            
-            // Close mobile menu if open
-            document.getElementById('main-nav').classList.remove('active');
-            
-            // Scroll to top
-            window.scrollTo(0, 0);
+            showPageWithTransition(pageId);
         }
 
         // Add to cart functionality
-        document.querySelectorAll('.add-to-cart').forEach(button => {
+        document.querySelectorAll('.add-to-cart-prnt').forEach(button => {
             button.addEventListener('click', function() {
                 window.open('https://forms.gle/44S8mxhu3XPuwSmk9', '_blank');
+            });
+        });
+        document.querySelectorAll('.add-to-cart-stk').forEach(button => {
+            button.addEventListener('click', function() {
+                window.open('https://forms.gle/5GN6SZTBJfLmtsu8A', '_blank');
             });
         });
         
